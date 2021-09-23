@@ -1,0 +1,115 @@
+CLASS: FighterJet is a Ship
+
+PRIVATE CLASS FIELDS: ordanance (String)
+                      wingSpan (real)
+
+CONSTRUCTORS:
+Default:
+    IMPORT: none
+    EXPORT: address of new FighterJet object
+    ASSERTION: equipped with 10 homing missiles and a wing span of 2.25
+    ALGORITHM: wingSpan := 2.25
+               ordanance := 10 homing missiles
+
+Alternate #1:
+    IMPORT: inSerNum (String), inYear(integer), inEngine(Engine), inOrdanance(String), inWingSpan(real)
+    EXPORT: address of new FighterJet object
+    ASSERTION: Creates the object if the imports are valid and FAILS otherwise
+    ALGORITHM:  super<-inSerNum, inYear, inEngine
+                IF (validateOrdanance<- inOrdanance) AND (validateWingSpan<- inWingSpan) THEN
+                    ordanance = inOrdanance
+                    wingSpan := inWingSpan
+                ELSE
+                    FAIL
+                END IF
+
+Copy:
+    IMPORT: inJet (FighterJet)
+    EXPORT: address of new FighterJet object
+    ASSERITON: Creates an object with an identical object state as the import
+    ALGORITHM:  super<-inJet
+                ordanace := inJet.getOrdanance <- none
+                wingSpan := inJet.getWingSpan <- none
+
+MUTATORS:
+SUBMODULE: setOrdanance
+	IMPORT: inOrdanance (String)
+	EXPORT: none
+	ASSERTION: sets the ordanance to inOrdanance
+	ALGORITHM: ordanance := inOrdanance
+
+SUBMODULE: setWingSpan
+	IMPORT: inWingSpan (real)
+	EXPORT: none
+	ASSERTION: sets the wingSpan to inWingSpan
+	ALGORITHM: wingSpan := inWingSpan
+
+ACCESSORS:
+SUBMODULE: getOrdanance
+	IMPORT: none
+	EXPORT: ordanance
+
+SUBMODULE: getWingSpan
+	IMPORT: none
+	EXPORT: wingSpan
+
+SUBMODULE: equals
+	IMPORT: inObj (object)
+	EXPORT: same (boolean)
+	ASSERTION: Two FighterJets are interchangable if they have the same serialNum and year
+	ALGORITHM:  same := FALSE
+                IF (inObj ISA FighterJet) THEN
+                    FighterJet := (Convert to FighterJet)inObj
+                    IF(super EQUALS<-inJet)
+                      IF(wingSpan EQUALS inJet.getWingSpan <- none)
+                        IF(ordanance EQUALS inJet.getOrdanance <- none)
+                          same := true
+                ENDIF
+
+SUBMODULE: clone
+  IMPORT: none
+  EXPORT: none
+  ALGORITHM: FighterJet<-this
+
+SUBMODULE: toString
+	IMPORT: none
+	EXPORT: outStr (String)
+	ASSERTION:
+	ALGORITHM: str := super.toString<-none+" It is a fighter jet with a wing span of "+
+             wingSpan+" meters and equipped with "+ordanance+"."
+
+SUBMODULE: toStringOutput
+  IMPORT: none
+  EXPORT: outStr (String)
+  ALGORITHM: "F,"+super.toStringOutput<-none+","+wingSpan+","+ordanance
+
+SUBMODULE: calcTravelJet
+  IMPORT: shipArray(ARRAY of Ship), distance (integer)
+  EXPORT: fastestSub (String)
+  ALGORITHM:
+      FOR(int i = 0; shipArray[i] != null; INCREASE i BY 1)
+          IF(shipArray[i] INSTANCEOF FighterJet)
+              engineGet = super.getEngine<-none
+              cylinder = engineGet.getCylinder<-none
+              wingSpan = getWingSpan<-none
+              serialNum = shipArray[i].getSerNum<-none
+              timeTaken = (((double)distance) / ((wingSpan * (double)cylinder * 150.0)))
+              IF(timeTaken < shortestTimeTakenJet)
+                  shortestTimeTakenJet = timeTaken
+                  serialNumFinal = serialNum
+              ELSE
+                  shortestTimeTakenJet = shortestTimeTakenJet
+                  serialNumFinal = serialNumFinal
+              fastestSub = "The fastest fighterjet "+serialNumFinal+ " travels the distance with a time of "+df.format(shortestTimeTakenJet)+" hours"
+
+PRIVATE SUBMODULES:
+SUBMODULE: validateWingSpan
+	IMPORT: inWingSpan (real)
+	EXPORT: valid (boolean)
+	ASSERTION: wingSpan is between 2.20 and 25.6
+	ALGORITHM: valid := (inWingSpan <= 25.6) AND (inWingSpan >= 2.20)
+
+SUBMODULE: validateOrdanance
+  IMPORT: inOrdanance (real)
+  EXPORT: valid (boolean)
+  ALGORITHM: valid := inOrdanance != null

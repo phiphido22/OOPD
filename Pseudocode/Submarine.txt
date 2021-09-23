@@ -1,0 +1,118 @@
+CLASS: Submarine
+
+PUBLIC CLASS CONSTANTS: STEEL := "STEEL"
+                        ALLOY := "ALLOY"
+                        TITANIUM := "TITANIUM"
+
+PRIVATE CLASS FIELDS: hull (String)
+                      maxDepth (real)
+
+CONSTRUCTORS:
+Default:
+    IMPORT: none
+    EXPORT: address of new Submarine object
+    ASSERTION: with a titanium hull and max depth of -450.0
+    ALGORITHM: hull := TITANIUM
+               maxDepth := -450.0
+
+Alternate #1:
+    IMPORT: inSerNum (real), inYear(integer), inEngine(Engine), inHull(String), inDepth(real)
+    EXPORT: address of new Submarine object
+    ASSERTION: Creates the object if the imports are valid and FAILS otherwise
+    ALGORITHM:  super<-inSerNum, inYear, inEngine
+                IF (validateHull<- inHull) AND (validateDepth<- inDepth) THEN
+                    hull = inHull
+                    maxDepth := inDepth
+                ELSE
+                    FAIL
+                END IF
+
+Copy:
+    IMPORT: inSub (Submarine)
+    EXPORT: address of new Submarine object
+    ASSERITON: Creates an object with an identical object state as the import
+    ALGORITHM:  hull := inSub.getHull <- none
+                maxDepth := inSub.getDepth <- none
+
+MUTATORS:
+SUBMODULE: setHull
+	IMPORT: inHull (String)
+	EXPORT: none
+	ASSERTION: sets the hull to inHull
+	ALGORITHM: hull := inHull
+
+SUBMODULE: setDepth
+	IMPORT: inDepth (real)
+	EXPORT: none
+	ASSERTION: sets the maxDepth to inDepth
+	ALGORITHM: maxDepth := inDepth
+
+ACCESSORS:
+SUBMODULE: getHull
+	IMPORT: none
+	EXPORT: hull
+
+SUBMODULE: getDepth
+	IMPORT: none
+	EXPORT: maxDepth
+
+SUBMODULE: equals
+	IMPORT: inObj (object)
+	EXPORT: same (boolean)
+	ASSERTION: Two submarines are interchangable if they have the same serialNum and year
+	ALGORITHM:  same := FALSE
+                IF (inObj ISA Submarine) THEN
+                    Submarine := (Convert to Submarine)inObj
+                    IF(super EQUALS<-inSub)
+                      IF(hull EQUALS inSub.getHull <- none)
+                        IF(maxDepth EQUALS inSub.getDepth <- none)
+                          same := true
+                ENDIF
+
+SUBMODULE: clone
+  IMPORT: none
+  EXPORT: none
+  ALGORITHM: Submarine<-this
+
+SUBMODULE: toString
+	IMPORT: none
+	EXPORT: outStr (String)
+	ASSERTION:
+	ALGORITHM: outStr = super.toString<-none+ " It is a submarine with a "+hull+" hull and a max depth of "+maxDepth+ " meters.";
+
+SUBMODULE: toStringSubOutput
+ IMPORT: none
+ EXPORT: outStr (String)
+ ALGORITHM: "S,"+super.toStringOutput<-none+","+hull+","+maxDepth
+
+SUBMODULE: calcTravelSub
+  IMPORT: shipArray(ARRAY of Ship), distance (integer)
+  EXPORT: fastestSub (String)
+  ALGORITHM:
+      FOR(int i = 0; shipArray[i] != null; INCREASE i BY 1)
+          IF(shipArray[i] INSTANCEOF Submarine)
+              engineGet := super.getEngine<-none
+              cylinder = engineGet.getCylinder<-none
+              maxDepth = getDepth<-none
+              serialNum = shipArray[i].getSerNum<-none
+              timeTaken = (((convert to double)distance / (convert to double)cylinder) * (1.0 / (10.0 + (maxDepth * (-1.0)))))
+              IF(timeTaken < shortestTimeTakenSub)
+                  shortestTimeTakenSub = timeTaken
+                  serialNumFinal = serialNum
+              ELSE
+                  shortestTimeTakenSub = shortestTimeTakenSub
+                  serialNumFinal = serialNumFinal
+              fastestSub = "The fastest submarine "+serialNumFinal+ " travels the distance with a time of "+df.format(shortestTimeTakenSub)+" hours"
+
+PRIVATE SUBMODULES:
+SUBMODULE: validateHull
+	IMPORT: inHull (String)
+	EXPORT: valid (boolean)
+	ASSERTION: hull must be STEEL, ALLOY or TITANIUM
+	ALGORITHM: valid := (inHull EQUALS STEEL) OR (inHull EQUALS ALLOY) OR (inHull EQUALS TITANIUM)
+
+SUBMODULE: validateDepth
+	IMPORT: inDepth (real)
+	EXPORT: valid (boolean)
+	ASSERTION: maxDepth is between -500.0 and 0
+	ALGORITHM: valid := (inDepth <= 0.0) AND (inDepth >= -500.0)

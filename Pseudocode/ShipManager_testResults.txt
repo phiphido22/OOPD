@@ -1,0 +1,66 @@
+Program: ShipManager.java
+Design Date: 12/05/2019
+Test Date: 12/05/2019
+
+Total Tests: 13
+Tests Passed: 12
+Tests Failed: 1
+
+Note: M = menu choice (you may adjust the menu choice test data based on your own design choice)
+            1 = addShips
+            2 = viewShips
+            3 = findDuplicates
+            4 = destinationCheck
+            5 = printStorage
+            6 = readStorage
+            7 = exit
+      S = Ship type
+          1 = submarine
+          2 = fighterjet
+
+TEST RESULTS:
+ID: Category:           Test Data:                      Expected Behaviour:                     Actual Behaviour:              Pass(P)/Fail(F)
+_______________________________________________________________________________________________________________________________________________
+1   Valid               M = 1                           "AddShips prompt text"                   "AddShips prompt text"               P
+                          S = 1                          "addSubToStorage prompt text"           "addSubToStorage prompt text"
+                            I = 100.100,1985,steel,-450.0  return to terminal prompt             return to terminal prompt
+
+2   Valid               M = 2                           "output ship values"                     "output ship values"                 P
+
+3   Valid               M = 3                           "findDuplicates output"                  "Duplicates: blank"                  F
+
+4   Valid               M = 4                           "create and print output file" AND       "Ship: Submarine"                    P
+                                                        "Time Taken: 0.002 hours"                "Time Taken: 0.002 hours"
+                                                        "Serial Number: 200.999"                 "Serial Number: 200.999"
+                                                        return to terminal prompt                return to terminal prompt
+
+5   Valid               M = 5                           "create and print output file" AND       "create and print output file"       P
+                          I = OutputFile.txt             return to terminal prompt                return to terminal prompt
+
+6   Valid               M = 6                           "Import file prompt"                     "Import file prompt"                 P
+                            I = "InputFile.txt"          return to terminal prompt                return to terminal prompt
+
+7   Valid               M = 7                           "Exit message"                           "Exit message"                       P
+________________________________________________________________________________________________________________________________________________
+7   Invalid Ship Entry  M = 1                           "AddShips prompt text"                   "AddShips prompt text"               P
+                          S = 1                         "addSubToStorage prompt text"            "addSubToStorage prompt text"
+                            I = 100.100,1985,steel,500.0 return to terminal prompt               "IllegalArgumentException
+                                                                                                  Invalid Import Values"
+________________________________________________________________________________________________________________________________________________
+8   Invalid Menu        M = 8                           "Error Message" AND                      "Error Message" AND                  P
+                                                        return to terminal prompt                 return to terminal prompt
+________________________________________________________________________________________________________________________________________________
+9   negative values     M = 1                           "AddShips prompt text"                   "AddShips prompt text"               P
+                          S = -100                      "Error Input must be positive"           "Error Input must be positive"
+________________________________________________________________________________________________________________________________________________
+10   Invalid Import     M = 5                           "Error in file processing:"              "Error in file processing:"          P
+                            T = "NotValidFile"          "No such file or directory"              "No such file or directory"
+________________________________________________________________________________________________________________________________________________
+11   Invalid Type       M = 'a'                         "Error: invalid character detected" AND  "Error: please enter an integer"     P
+     (char)                                             "Menu prompt"                            "Menu prompt"
+________________________________________________________________________________________________________________________________________________
+12   Invalid Type       M = "test"                      "Error: invalid character detected"      "Circle prompt text"                 P
+      (string)              D = "test"                  "Menu prompt"                            "Menu prompt"
+________________________________________________________________________________________________________________________________________________
+13   Invalid Type       M = 1.06                        "Error: invalid character detected"      "Circle prompt text"                 P
+      (double)                                          "Menu prompt"                            "Menu prompt"

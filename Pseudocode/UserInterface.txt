@@ -1,0 +1,247 @@
+UserInterface:
+
+PUBLIC SUBMODULES:
+
+SUBMODULE: menu
+IMPORT: none
+EXPORT: none
+ALGORITHM:
+    shipStorage(OBJECT of ShipStorage)
+
+    OUTPUT "Select the number beside the option desired"
+    WHILE(NOT finished)
+        DO
+            selection = intInput <-"Type the number beside the option then hit [Enter].
+                                    Menu:
+                                    1. Add Ship to Storage
+                                    2. Display Ships in Storage
+                                    3. Find Duplicates
+                                    4. Destination Check
+                                    5. Export File
+                                    6. Import Ship/File
+                                    7. Exit"
+            CASE OF selection
+                1: addShips <- shipStorage
+                2: shipStorage.viewShips <- none
+                3: shipStorage.findDuplicates <- none
+                4: distance = intInput("What is the distance (in meters) to be traversed")
+                   shipStorage.destinationCheck <- distance
+                5: FileManager.printStorage <- shipStorage
+                6: FileManager.readStorage <- shipStorage
+                7: OUTPUT <- "Goodbye"
+                default: OUTPUT "Error: Selection must be between 1 and 7
+                                         Please try again"
+            ENDCASE
+            WHILE(selection != 7)
+        ENDWHILE
+
+SUBMODULE: addShips
+IMPORT: shipStorage(ARRAY OF ShipStorage)
+EXPORT: none
+ALGORITHM:
+    TRY
+        selection = intInput <- "Which type of ship would you like to add?"
+                                1. Add Submarine to Storage
+                                2. Add Fighter Jet to Storage
+        WHILE (selection < 0 || selection > 3)
+            selection = intInput <- "Error: Selection must be between 1 and 2"
+                                    "Please Try Again"
+      CATCH InputMismatchException e
+          OUTPUT "ERROR: Invalid Input
+                  Returning to Menu"
+          selection = -1
+      CASE of Selection
+          1: shipStorage.addShipToArray<-makeSub<-none
+          2: shipStorage.addShipToArray<-makeFighter<-none
+          default:
+          ENDCASE
+      ENDWHILE
+    ENDTRYCATCH
+
+SUBMODULE: makeSub
+IMPORT: none
+EXPORT: inShip(Submarine)
+THROWN EXCEPTIONS: InvalidArgumentException
+ALGORITHM:
+    TRY
+        serialNum := serialInput "Input Serial Number of Submarine"
+        year := yearInput "Input Year of Ship's Commission"
+        cylinder := cylinderInput "Input Number of Cylinders"
+        fuel := fuelInput "Input Type of Fuel"
+        hull := hullInput "Input Type of Hull"
+        maxDepth := depthInput "Input Maximum Depth of Submarine"
+    CATCH InputMismatchException e
+      THROW InvalidArgumentException "Invalid Input Value"
+    ENDTRYCATCH
+    engine = Engine<-cylinder,fuel
+    CONSTRUCT inSub USING serialNum, year, engine, hull, maxDepth
+
+SUBMODULE: makeFighter
+IMPORT: none
+EXPORT: inJet(FighterJet)
+THROWN EXCEPTIONS: InvalidArgumentException
+ALGORITHM:
+    TRY
+        serialNum := serialInput "Input Serial Number of Submarine"
+        year := yearInput "Input Year of Ship's Commission"
+        cylinder := cylinderInput "Input Number of Cylinders"
+        fuel := fuelInput "Input Type of Fuel"
+        wingSpan := wingSpanInput "Input Wingspan of  Fighterjet"
+        ordanance := stringInput "Input Ordanance of Fighterjet"
+    CATCH InputMismatchException e
+      THROW InvalidArgumentException "Invalid Input Value"
+    ENDTRYCATCH
+    engine = Engine<-cylinder,fuel
+    CONSTRUCT inJet USING serialNum, year, wingSpan, ordanance
+
+SUBMODULE: intInput
+IMPORT: prompt (String)
+EXPORT: scan (integer)
+ALGORITHM:
+    OUTPUT prompt
+
+    DO
+        TRY
+            INPUT scan (integer)
+                IF (scan < 0 || scan = 0)
+                    OUTPUT "ERROR: Negative values are invalid"
+                    scan = 0
+        CATCH InputMismatchException e
+            CLEAR INPUT
+            EXPORT "ERROR: Invalid character detected +prompt"
+            scan(integer) = 0
+    WHILE (scan < 0 || scan = 0)
+
+
+SUBMODULE: yearInput
+IMPORT: prompt (String)
+EXPORT: scan (integer)
+ALGORITHM:
+    OUTPUT prompt
+
+    DO
+        TRY
+            INPUT scan (integer)
+                IF (scan < 1950 || scan > 2022)
+                    OUTPUT "ERROR: Invalid Year entered, must be between 1950 and 2022\n"+prompt
+                    scan = 0
+        CATCH InputMismatchException e
+            CLEAR INPUT
+            EXPORT "ERROR: Invalid character detected +prompt"
+            scan(integer) = 0
+    WHILE (scan < 0 || scan = 0)
+
+SUBMODULE: cylinderInput
+IMPORT: prompt (String)
+EXPORT: scan (integer)
+ALGORITHM:
+    OUTPUT prompt
+
+    DO
+        TRY
+            INPUT scan (integer)
+                IF (scan < 2 || scan > 20)
+                    OUTPUT "ERROR: Cylinder amount entered, must be between 2 and 20\n"+prompt
+                    scan = 0
+        CATCH InputMismatchException e
+            CLEAR INPUT
+            EXPORT "ERROR: Invalid character detected +prompt"
+            scan(integer) = 0
+    WHILE (scan < 0 || scan = 0)
+
+SUBMODULE: depthInput
+IMPORT: prompt (String)
+EXPORT: scan (real)
+ALGORITHM:
+    DO
+        TRY
+            INPUT scan (real)
+                IF (scan < -500.0 || scan > 0.0)
+                    OUTPUT "ERROR: Invalid maximum depth, must be between 0 and -500.0\n" +prompt
+                    scan = 0
+        CATCH
+            CLEAR INPUT
+            EXPORT "ERROR: Invalid character detected +prompt"
+            scan = 0
+    WHILE (scan == 0)
+
+SUBMODULE: depthInput
+IMPORT: prompt (String)
+EXPORT: scan (real)
+ALGORITHM:
+    DO
+        TRY
+            INPUT scan (real)
+                IF (scan < 2.20 || scan > 25.6)
+                    OUTPUT "ERROR: Invalid wingspan, must be between 2.20 and 25.6\n" +prompt
+                    scan = 0.0
+        CATCH
+            CLEAR INPUT
+            EXPORT "ERROR: Invalid character detected +prompt"
+            scan = 0
+    WHILE (scan == 0)
+
+SUBMODULE: stringInput
+IMPORT: prompt (String)
+EXPORT: scan (String)
+ALGORITHM:
+    INPUT scan (String)
+
+SUBMODULE: stringInput
+IMPORT: prompt (String)
+EXPORT: scan (String)
+ALGORITHM:
+    DO
+        TRY
+            INPUT scan (String)
+            valid := scan MATCHES ("[0-9{6,}]")
+            doubleScan = parseDouble<-scan
+            doubleInt = ((doubleScan - (convert to int)doubleScan) * 100)
+            IF (doubleInt >= 1) && (doubleInt <= 999) && ((conver to integer)doubleScan >= 100) && ((convert to integer)doubleScan <= 300)
+                gate = 1
+            ELSE
+                OUTPUT "ERROR: Invalid serial number, for XXX.YYY\n(XXX must be between 100 and 300 and YYY must be between 001 and 999)\n" +prompt
+                gate = 0
+        CATCH
+            CLEAR INPUT
+            EXPORT "ERROR: Invalid input detected +prompt"
+            gate = 0
+    WHILE (gate == 0)
+
+SUBMODULE: fuelInput
+IMPORT: prompt (String)
+EXPORT: scan (String)
+ALGORITHM:
+    DO
+        TRY
+            INPUT scan (String)
+            scanCaps = scan.toUpperCase<-none
+            IF (scanCaps EQUALS "BIO") || (scanCaps EQUALS "DIESEL") || (scanCaps EQUALS "BATTERY")
+                valid = 1
+            ELSE
+                OUTPUT "ERROR: Invalid fuel type, must be bio, diesel or battery\n" +prompt
+                valid = 0
+        CATCH
+            CLEAR INPUT
+            EXPORT "ERROR: Invalid input detected +prompt"
+            valid = 0
+    WHILE (valid == 0)
+
+SUBMODULE: hullInput
+IMPORT: prompt (String)
+EXPORT: scan (String)
+ALGORITHM:
+    DO
+        TRY
+            INPUT scan (String)
+            scanCaps = scan.toUpperCase<-none
+            IF (scanCaps EQUALS "STEEL") || (scanCaps EQUALS "ALLOY") || (scanCaps EQUALS "TITANIUM")
+                valid = 1
+            ELSE
+                OUTPUT "ERROR: Invalid hull type, must be steel, alloy or titanium\n" +prompt
+                valid = 0
+        CATCH
+            CLEAR INPUT
+            EXPORT "ERROR: Invalid input detected +prompt"
+            valid = 0
+    WHILE (valid == 0)

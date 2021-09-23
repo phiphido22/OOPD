@@ -1,0 +1,8 @@
+ShipManager
+
+MAIN
+  TRY
+    construct new UserInterface ui
+    UserInterface.menu()
+  CATCH Exception e
+    OUTPUT Error: Invalid

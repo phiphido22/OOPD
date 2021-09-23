@@ -1,0 +1,72 @@
+FileManager
+
+SUBMODULE: readStorage
+IMPORT: shipStorage (ARRAY OF ShipStorage)
+EXPORT: none
+ALGORITHM:
+    TRY
+        line = READ LINE
+        lineArray = line.split(",")
+
+        IF lineArray LENGTH IS NOT 7 THEN
+            THROW IllegalArgumentException ("Invalid File")
+
+        IF lineArray[0] LENGTH IS NOT 1 THEN
+            THROW IllegalArgumentException ("Invalid File")
+
+        type = lineArray[0].charAt(0)
+        serialNum = validateSerNum(lineArray[1])
+        year = validateYear(lineArray[2] CONVERT TO INTEGER)
+        cylinder = validateCylinder(lineArray[3] CONVERT TO INTEGER)
+        fuel = validateFuel(lineArray[4])
+
+        CONSTRUCT engine USING cylinders, fuel (ALTERNATE CONSTRUCTOR)
+
+        CASE UPPERCASE type
+          case S: s:
+              hull = lineArray[5]
+              maxDepth = lineArray[6]
+
+              CONSTRUCT inShip (Submarine) USING serialNum, year, engine, hull, maxDepth
+              shipStorage.addShipToArray<-inShip
+          case F: f:
+              wingSpan = lineArray[5]
+              ordanance = lineArray[6]
+
+              CONSTRUCT inShip (FighterJet) USING serialNum, year, engine, wingSpan, Ordanance
+
+              shipStorage.addShipToArray<-inShip
+
+    CATCH IllegalArgumentException e
+        IF fileStrm NOT null
+            TRY
+                fileStrm.close <- none
+            CATCH IOException ex2
+            ENDTRYCATCH
+        OUTPUT "Error in file processing: " + e.getMessage <- none
+    ENDTRYCATCH
+
+SUBMODULE: printStorage
+IMPORT: shipStorage (ARRAY OF ShipStorage)
+EXPORT: none
+ALGORITHM:
+    TRY
+        fileOutName := stringInput<-"What file would you like to write to?"
+        pw := OPENFILE fileOutName
+
+        Ship (ARRAY) Ship = shipStorage.getShipArray <- none
+        FOR i = 0 TO shipStorage.getCurrentShipCount<-none CHANGEBY 1 DO
+          IF(shipArray[i] INSTANCEOF Submarine)
+            WRITE shipArray[i].toStringOutput <- none
+          ELSEIF(shipArray[i] INSTANCEOF FighterJet)
+            WRITE shipArray[i].toStringOutput <- none
+        ENDFOR
+        CLOSE pw
+    CATCH IOException
+        IF fileStrm NOT null
+            TRY
+                fileStrm.close <- none
+            CATCH IOException ex2
+            ENDTRYCATCH
+        OUTPUT "Error in file processing: " + e.getMessage <- none
+    ENDTRYCATCH

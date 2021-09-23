@@ -1,0 +1,141 @@
+ShipStorage:
+
+classfields:
+    Constant MAXARRAY := 30
+    shipArray (array of Ship class objects)
+    currentShipCount (integer)
+    submarine (Submarine)
+    fighterjet (FighterJet)
+
+CONSTRUCTOR
+SUBMODULE: Default Constructor
+IMPORT: none
+EXPORT: address of new ShipStorage object
+ALGORTIHM:
+    shipArray = new Ship[MAXARRAY]
+    currentShipCount := 0
+
+SUBMODULE: Alternate Constructor
+IMPORT: inShipArray(ARRAY of Ship), shipArray(ARRAY of Ship), inCurrentShipCount (Integer)
+EXPORT: address of new ShipStorage object
+ALGORITHM:
+    IF shipArray.length = inShipArray.length && validateCurrentShipCount <- inCurrentShipCount
+      FOR i:=0 to MAXARRAY-1 CHANGEBY 1
+          shipArray[i] := inShipArray[i]
+
+      currentShipCount = getCurrentShipCount <- none
+    ELSE throw IllegalArgumentException "Invalid Storage Volume"
+
+SUBMODULE: copy Constructor
+IMPORT: inShipStorage(ShipStorage)
+EXPORT: Address of new ShipStorage object
+ALGORITHM:
+    shipArray = new Ship (ARRAY of MAXARRAY size)
+    Ship[] inShipArray = inShipStorage.getShipArray<-none
+    FOR(int i = 0; i < MAXARRAY; INCREASE i BY 1)
+      shipArray[i] = inShipArray[i]
+    ENDFOR
+    currentShipCount = getCurrentShipCount<-none
+
+SUBMODULE: addShipToArray
+IMPORT: inShip(Ship)
+EXPORT: none
+ALGORITHM:
+  exit = 0
+  WHILE(exit = 0)
+    IF shipArray[i] = null THEN
+        shipArray[i] = inShip
+        exit = 1
+        currentShipCount = currentShipCount + 1
+    INCREASE i BY 1
+
+SUBMODULE: viewShips
+IMPORT: none
+EXPORT: none
+ALGORITHM:
+    FOR(int i = 0; shipArray[i] != null; INCREASE i BY 1)
+      output = shipArray[i].toString<-none
+      OUTPUT output+NEWLINE
+
+SUBMODULE: findDuplicates
+IMPORT:
+EXPORT:
+ALGORITHM:
+    Ship[] shipArray = getShipArray<-none
+
+    FOR(int i = 0; i < shipArray.length & shipArray[i] != null; INCREASE i BY 1)
+      FOR(int j = 0; j < shipArray.length & shipArray[j] != null; INCREASE j BY 1)
+        IF(shipArray[i].equals<-shipArray[j] & i!=j)
+          output = output + shipArray[i].toString<-none
+    OUTPUT Duplicate Ships: +output
+
+SUBMODULE: destinationCheck
+IMPORT: distance (integer)
+EXPORT:
+ALGORITHM:
+    Construct new Submarine object
+    construct new FighterJet object
+    fastestSub = submarine.calcTravelSub<-shipArray, distance
+    fastestJet = fighterjet.calcTravelJet<-shipArray, distance
+
+    OUTPUT fastestSub+"\n"+fastestJet
+
+
+ACCESSORS:
+SUBMODULE: getShipArray
+IMPORT: nothing
+EXPORT: copy of shipArray (array of Ship)
+ALGORITHM:
+    return shipArray
+
+SUBMODULE: getCurrentShipCount
+IMPORT: none
+EXPORT: currentShipCount (integer)
+ALGORITHM: return currentShipCount
+
+MUTATORS:
+SUBMODULE: setShipArray
+IMPORT: inShipArray (array of Ship)
+EXPORT: none
+ALGORITHM:
+    shipArray = inShipArray
+
+SUBMODULE: setCurrentShipCount
+IMPORT: inCurrentShipCount (integer)
+EXPORT: none
+ALGORITHM: IF validateCurrentShipCount <- inCurrentShipCount
+              currentShipCount := inCurrentShipCount
+           ELSE
+              throw INVALID STORAGE VOLUME
+
+SUBMODULE: equals
+IMPORT: inObject Object
+EXPORT: isEqual (boolean)
+ALGORITHM:
+    same = true
+    count = 1
+    IF(inObj INSTANCEOF ShipStorage)
+      inShipStorage = inObj
+      inShipArray = inShipStorage.getShipArray <- none
+      same = (validateShipArray<-inShipArray &
+      currentShipCount = getCurrentShipCount<-none
+
+PRIVATE SUBMODULES:
+SUBMODULE: validateShipArray
+IMPORT: inShipArray (ARRAY of Ship)
+EXPORT: valid (boolean)
+ALGORITHM:
+    equal = true
+    IF(shipArray.length != inShipArray.length)
+        equal = false
+    ELSE
+        count = 0
+        DO
+            equal = shipArray[count].equals<-inShipArray[count]
+            count = count + 1
+        WHILE equal & count < shipArray.length
+
+SUBMODULE: validateCurrentShipCount
+IMPORT: inCurrentShipCount (integer)
+EXPORT: valid (boolean)
+ALGORITHM: return inCurrentShipCount >= 0 && inCurrentShipCount >= currentShipCount

@@ -1,0 +1,108 @@
+ABSTRACT CLASS: Ship
+
+classfields:
+    year (integer)
+    serialNum (String)
+    engine (Engine)
+
+SUBMODULE: default constructor
+IMPORT: nothing
+EXPORT:
+ASSERTION:
+ALGORITHM:
+  serialNum := "200.595"
+  year := 1990
+  engine = default Engine
+
+SUBMODULE: alternate constructor
+IMPORT: inSerNum (String), inYear (integer), inEngine (Engine)
+EXPORT:
+ASSERTION:
+ALGORITHM:
+  IF validateSerNum<-inSerNum
+    throw IllegalArgumentException "Invalid Serial Number"
+  IF validateYear<-inYear
+    throw IllegalArgumentException "Invalid Commission Year"
+  IF inEngine := null
+    throw IllegalArgumentException "Invalid Engine"
+
+  serialNum = new String<-inSerNum
+  year = new Integer<-inYear
+  engine = new Engine<-inEngine
+
+SUBMODULE: copy constructor
+IMPORT: inShip (Ship)
+EXPORT:
+ASSERTION:
+ALGORITHM:
+  serialNum = inShip.getSerNum<-none
+  year = inShip.getYear<-none
+  engine = inShip.getEngine<-none
+
+SUBMODULE: equals
+IMPORT: inShip Ship
+EXPORT: isEqual
+ASSERTION:
+ALGORITHM:
+  isEqual = false
+  IF inObject is really a Ship THEN
+    make inObject a Ship names inShip
+    IF serialNum EQUALS getYear<-none
+      IF year := getYear<-none
+        IF engine.equals<-inShip.getEngine<-none
+          isEqual := true
+
+SUBMODULE: toString
+IMPORT: nothing
+EXPORT: outStr
+ASSERTION:
+ALGORITHM:
+  outStr = "The ship "+serialNum+" was commissioned in "+year+", "+engine.toString();
+
+SUBMODULE: toStringOutput
+IMPORT: nothing
+EXPORT: outStr
+ASSERTION:
+ALGORITHM:
+  outStr = serialNum+","+year+"," +engine.toStringEngineOutput();
+
+SUBMODULE: clone <ABSTRACT>
+IMPORT: none
+EXPORT: Ship object
+ASSERTION:
+ALGORITHM: no body due to being an abstract method
+
+SUBMODULE: getSerNum
+IMPORT: none
+EXPORT: serialNum
+
+SUBMODULE: getYear
+IMPORT: none
+EXPORT: year
+
+SUBMODULE: setSerNum
+IMPORT: inSerNum (String)
+EXPORT: none
+ASSERTION: sets the serialNum to inSerNum
+ALGORITHM: serialNum := inSerNum
+
+SUBMODULE: setYear
+IMPORT: inYear (integer)
+EXPORT: none
+ASSERTION: sets the year to inYear
+ALGORITHM: year := inYear
+
+SUBMODULE: validateSerNum
+IMPORT: inSerNum (String)
+EXPORT: valid (boolean)
+ASSERTION: serialNum (XXX.YYY) where XXX is between 100 and 300, and YYY is between 001 and 999
+ALGORITHM: boolean valid = inSerNum.matches("[0-9{6,}]");
+           inSerDouble = Double.parseDouble(inSerNum);
+           inSerInt = ((inSerDouble - (convert to integer)inSerDouble) * 100);
+           (inSerInt >= 1) && (inSerInt <= 999) && ((convert to integer)inSerDouble >= 100) && ((convert to integer)inSerDouble <= 300)
+
+SUBMODULE: validateYear
+IMPORT: inYear (integer)
+EXPORT: valid (boolean)
+ASSERTION: year is between 1950 and 2022 (inclusive)
+ALGORITHM: valid := (inYear >= 1950) AND (inYear <= 2022)

@@ -1,0 +1,97 @@
+CLASS: Engine
+PUBLIC CLASS CONSTANTS: BATTERY := "BATTERY"
+                        DIESEL := "DIESEL"
+                        BIO := "BIO"
+
+PRIVATE CLASS FIELDS: fuel (String)
+                      cylinder (integer)
+
+CONSTRUCTORS:
+Default:
+    IMPORT: none
+    EXPORT: address of new Engine object
+    ASSERTION: engine has 16 cylinders and runs on bio fuel
+    ALGORITHM: cylinder := 16
+               fuel := BIO
+
+Alternate #1:
+    IMPORT: inCylinder (integer), inFuel(String)
+    EXPORT: address of new Engine object
+    ASSERTION: Creates the object if the imports are valid and FAILS otherwise
+    ALGORITHM:
+                IF (validateCylinder<- inCylinder) AND (validateFuel<- inFuel) THEN
+                    cylinder := inCylinder
+                    fuel := inFuel
+                ELSE
+                    FAIL
+                END IF
+
+Copy:
+    IMPORT: inEngine (Engine)
+    EXPORT: address of new Engine object
+    ASSERITON: Creates an object with an identical object state as the import
+    ALGORITHM:  cylinder := inEngine.getCylinder <- none
+                fuel := inEngine.getFuel <- none
+
+MUTATORS:
+SUBMODULE: setCylinder
+    IMPORT: inCylinder (integer)
+    EXPORT: none
+    ASSERTION: sets the cylinder to inCylinder
+    ALGORITHM: cylinder := inCylinder
+
+SUBMODULE: setFuel
+    IMPORT: inFuel (String)
+    EXPORT: none
+    ASSERTION: sets the fuel to inFuel
+    ALGORITHM: fuel := inFuel
+
+ACCESSORS:
+SUBMODULE: getCylinder
+	IMPORT: none
+	EXPORT: cylinder
+
+SUBMODULE: getFuel
+	IMPORT: none
+	EXPORT: fuel
+
+SUBMODULE: equals
+	IMPORT: inSerNum (real), inYear(integer)
+	EXPORT: same (boolean)
+	ASSERTION: Two submarines are interchangable if they have the same serialNum and year
+	ALGORITHM:  same := (serialNum EQUALS inSerNum) AND (year EQUALS inYear)
+
+SUBMODULE: equals
+	IMPORT: inObj (object)
+	EXPORT: same (boolean)
+	ASSERTION: Two submarines are interchangable if they have the same serialNum and year
+	ALGORITHM:  same := FALSE
+                IF (inObj ISA Submarine) THEN
+                    Submarine := (Convert to Submarine)inObj
+                    same := (serialNum EQUALS Submarine.getSerNum <- none) AND (year EQUALS submarine.getYear <- none)
+                ENDIF
+
+SUBMODULE: toString
+	IMPORT: none
+	EXPORT: str (String)
+	ASSERTION:
+	ALGORITHM: str := +cylinders+ " cylinders and runs on " +fuel
+
+SUBMODULE: toStringOutput
+  IMPORT: none
+  EXPORT: str (String)
+  ASSERTION:
+  ALGORITHM: str := cylinder+","+fuel
+
+PRIVATE SUBMODULES:
+SUBMODULE: validateCylinder
+	IMPORT: inCylinder (integer)
+	EXPORT: valid (boolean)
+	ASSERTION: between 2 and 20 cylinders, must be positive
+	ALGORITHM: valid := (inSerNum >= 2) AND (inSerNum <= 20)
+
+SUBMODULE: validateFuel
+	IMPORT: inFuel (String)
+	EXPORT: valid (boolean)
+	ASSERTION: fuel type must be battery, diesel or bio
+	ALGORITHM: valid := (inFuel EQUALS BATTERY) OR (inFuel EQUALS DIESEL) OR (inFuel EQUALS BIO)
